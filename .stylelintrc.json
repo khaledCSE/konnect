@@ -1,0 +1,20 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-rational-order",
+    "stylelint-config-prettier"
+  ],
+  "plugins": [
+    "stylelint-declaration-block-no-ignored-properties"
+  ],
+  "rules": {
+    "function-name-case": "lower",
+    "no-descending-specificity": null,
+    "number-max-precision": 8,
+    "alpha-value-notation": "number",
+    "color-function-notation": "legacy",
+    "declaration-empty-line-before": null,
+    "indentation": 2,
+    "block-no-empty": true
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint", // For ESLint linting
+    "prisma.prisma", // For Prisma support, if used
+    "eamodio.gitlens", // For Git insights
+    "bradlc.vscode-tailwindcss", // For TailwindCSS
+    "stylelint.vscode-stylelint"
+  ]
+}
