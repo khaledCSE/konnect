@@ -6,7 +6,7 @@ import {
   UserButton,
 } from '@clerk/nextjs';
 import {
-  BellDot, LogIn, Mails, Users,
+  BellDot, LogIn, Mails, Search, Users,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -21,7 +21,7 @@ const Navbar = () => (
       <Link href="/" className="text-2xl font-extrabold uppercase text-brand">Konnect</Link>
     </div>
     {/* center */}
-    <div className="hidden w-1/2 md:flex">
+    <div className="hidden w-1/2 items-center justify-between md:flex">
       {/* Links */}
       <div className="flex gap-6 text-gray-600">
         {navLinks.map((navLink) => (
@@ -30,6 +30,12 @@ const Navbar = () => (
             <span>{navLink.label}</span>
           </Link>
         ))}
+      </div>
+
+      {/* Search */}
+      <div className="hidden items-center rounded-xl bg-slate-100 p-2 xl:flex">
+        <input type="text" placeholder="Search ..." className="bg-transparent outline-none" />
+        <Search className="text-slate-400" />
       </div>
     </div>
     {/* right */}

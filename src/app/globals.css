@@ -10,4 +10,16 @@
   .auth-container {
     @apply h-[calc(100vh-96px)] flex items-center justify-center;
   }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    width: none;
+  }
+
+  .home-section {
+    @apply p-4 bg-white shadow-md rounded-lg;
+  }
 }
