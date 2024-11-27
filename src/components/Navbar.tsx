@@ -1,6 +1,17 @@
+import {
+  ClerkLoaded,
+  ClerkLoading,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs';
+import {
+  BellDot, LogIn, Mails, Users,
+} from 'lucide-react';
 import Link from 'next/link';
 
 import MobileNavbar from '@/components/MobileMenu';
+import Spinner from '@/components/Spinner';
 import { navLinks } from '@/constants';
 
 const Navbar = () => (
@@ -23,6 +34,29 @@ const Navbar = () => (
     </div>
     {/* right */}
     <div className="flex w-[30%] items-center justify-end gap-4 xl:gap-8">
+      <ClerkLoading>
+        <Spinner />
+      </ClerkLoading>
+      <ClerkLoaded>
+        <SignedIn>
+          <div className="cursor-pointer">
+            <Users />
+          </div>
+          <div className="cursor-pointer">
+            <Mails />
+          </div>
+          <div className="cursor-pointer">
+            <BellDot />
+          </div>
+          <UserButton />
+        </SignedIn>
+        <SignedOut>
+          <div className="flex items-center gap-2">
+            <LogIn />
+            <Link href="/sign-in">Login</Link>
+          </div>
+        </SignedOut>
+      </ClerkLoaded>
       <MobileNavbar />
     </div>
   </div>
