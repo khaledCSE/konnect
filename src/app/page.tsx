@@ -9,7 +9,7 @@ export default function Home() {
     <div className="flex gap-6 py-6">
       {/* Left */}
       <div className="hidden w-1/5 xl:block">
-        <LeftMenu />
+        <LeftMenu type="home" />
       </div>
 
       {/* Center */}
