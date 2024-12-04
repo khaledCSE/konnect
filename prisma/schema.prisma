@@ -78,8 +78,10 @@ model Follower {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
   follower    User     @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  // The person is being followed
   followerId  String
   following   User     @relation("UserFollowings", fields: [followingId], references: [id], onDelete: Cascade)
+  // The person is following
   followingId String
 }
 

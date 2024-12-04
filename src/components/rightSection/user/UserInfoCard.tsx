@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+import UpdateUserInfo from '@/components/rightSection/user/UpdateUserInfo';
 import UserInfoCardInteraction from '@/components/rightSection/user/UserInfoCardInteraction';
 import prisma from '@/lib/prisma.client';
 
@@ -65,7 +66,10 @@ const UserInfoCard = async ({ user }: Props) => {
       {/* Top */}
       <div className="flex items-center justify-between font-medium">
         <span className="text-gray-500">User Information</span>
-        <Link href="/" className="text-xs text-brand">See All</Link>
+        {currentUserId === user?.id ? (
+          <UpdateUserInfo />
+        )
+          : (<Link href="/" className="text-xs text-brand">See All</Link>)}
       </div>
 
       {/* Bottom */}
@@ -135,13 +139,14 @@ const UserInfoCard = async ({ user }: Props) => {
             </span>
           </div>
         </div>
-        <UserInfoCardInteraction
-          userId={user.id}
-          currentUserId={String(currentUserId)}
-          isFollowRequestPending={isFollowRequestPending}
-          isFollowing={isFollowing}
-          isUserBlocked={isBlocked}
-        />
+        {currentUserId !== user?.id && (
+          <UserInfoCardInteraction
+            userId={user.id}
+            isFollowRequestPending={isFollowRequestPending}
+            isFollowing={isFollowing}
+            isUserBlocked={isBlocked}
+          />
+        )}
       </div>
     </div>
   );

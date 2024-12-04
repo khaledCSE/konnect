@@ -19,7 +19,7 @@ const RightSection = ({ user }: Props) => (
           <UserInfoCard user={user} />
         </Suspense>
         <Suspense fallback="Loading ...">
-          <UserMediaCard />
+          <UserMediaCard userId={user.id} />
         </Suspense>
       </>
     )}

@@ -102,3 +102,58 @@ export const blockUser = async (userId: string): Promise<void> => {
     throw new Error('Could not block/unblock user');
   }
 };
+
+export const acceptFriendRequest = async ({ userId }: {userId: string}) => {
+  try {
+    const { userId: currentUserId } = await auth();
+
+    if (!currentUserId) {
+      throw new Error('User not authenticated');
+    }
+
+    const existingFollowRequest = await prisma.followRequest.findFirst({
+      where: {
+        senderId: userId,
+        receiverId: currentUserId,
+      },
+    });
+
+    if (existingFollowRequest) {
+      await prisma.followRequest.delete({ where: { id: existingFollowRequest.id } });
+
+      await prisma.follower.create({
+        data: {
+          followerId: userId,
+          followingId: currentUserId,
+        },
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error('Could not accept friend request');
+  }
+};
+
+export const declineFriendRequest = async ({ userId }: {userId: string}) => {
+  try {
+    const { userId: currentUserId } = await auth();
+
+    if (!currentUserId) {
+      throw new Error('User not authenticated');
+    }
+
+    const existingFollowRequest = await prisma.followRequest.findFirst({
+      where: {
+        senderId: userId,
+        receiverId: currentUserId,
+      },
+    });
+
+    if (existingFollowRequest) {
+      await prisma.followRequest.delete({ where: { id: existingFollowRequest.id } });
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error('Could not accept friend request');
+  }
+};
