@@ -1,3 +1,5 @@
+import { auth } from '@clerk/nextjs/server';
+import { User } from '@prisma/client';
 import {
   BriefcaseBusiness,
   Calendar,
@@ -7,73 +9,142 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-const UserInfoCard = () => (
-  <div className="home-section text-sm">
-    {/* Top */}
-    <div className="flex items-center justify-between font-medium">
-      <span className="text-gray-500">User Information</span>
-      <Link href="/" className="text-xs text-brand">See All</Link>
-    </div>
+import UserInfoCardInteraction from '@/components/rightSection/user/UserInfoCardInteraction';
+import prisma from '@/lib/prisma.client';
 
-    {/* Bottom */}
-    <div className="flex flex-col gap-4 text-gray-500">
-      <div className="flex items-center gap-2">
-        <span className="text-xl text-black">Lionel Messi</span>
-        <span className="text-sm">@lm10</span>
-      </div>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum doloribus ullam, molestias optio distinctio fugiat dolores error accusamus. Dicta fuga.
-      </p>
-      <div className="flex items-center gap-2">
-        <MapPin />
-        <span>
-          Living in
-          {' '}
-          <b>Cardiff</b>
-        </span>
-      </div>
-      <div className="flex items-center gap-2">
-        <GraduationCap />
-        <span>
-          Went to
-          {' '}
-          <b>University of South Wales</b>
-        </span>
-      </div>
-      <div className="flex items-center gap-2">
-        <BriefcaseBusiness />
-        <span>
-          Works at
-          {' '}
-          <b>British Gas</b>
-        </span>
+type Props = {
+  user: User
+}
+
+const UserInfoCard = async ({ user }: Props) => {
+  const joinedDate = new Date(user.createdAt);
+
+  const formattedDate = joinedDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  let isBlocked = false;
+  let isFollowing = false;
+  let isFollowRequestPending = false;
+
+  const { userId: currentUserId } = await auth();
+
+  if (currentUserId) {
+    const blockRes = await prisma.block.findFirst({
+      where: {
+        blockedId: user.id,
+        blockerId: currentUserId,
+      },
+    });
+
+    if (blockRes) isBlocked = true;
+
+    const followerRes = await prisma.follower.findFirst({
+      where: {
+        followerId: currentUserId,
+        followingId: user.id,
+      },
+    });
+
+    if (followerRes) isFollowing = true;
+
+    const followRes = await prisma.followRequest.findFirst({
+      where: {
+        senderId: user.id,
+        receiverId: currentUserId,
+      },
+    });
+
+    if (followRes) isFollowRequestPending = true;
+  }
+
+  return (
+    <div className="home-section text-sm">
+      {/* Top */}
+      <div className="flex items-center justify-between font-medium">
+        <span className="text-gray-500">User Information</span>
+        <Link href="/" className="text-xs text-brand">See All</Link>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          <LinkIcon />
-          <Link
-            href="https://khaledcse.netlify.app"
-            className="font-medium text-brand"
-          >
-            khaledcse.netlify.app
-          </Link>
+      {/* Bottom */}
+      <div className="flex flex-col gap-4 text-gray-500">
+        <div className="flex items-center gap-2">
+          <span className="text-xl text-black">{(user.name && user.surname) ? `${user.name} ${user.surname}` : user.username}</span>
+          <span className="text-sm">
+            @
+            {user.username}
+          </span>
         </div>
+        {user.description && (
+          <p>
+            {user.description}
+          </p>
+        )}
+        {user.city && (
+          <div className="flex items-center gap-2">
+            <MapPin />
+            <span>
+              Living in
+              {' '}
+              <b>{user.city}</b>
+            </span>
+          </div>
+        )}
+        {user.school && (
+          <div className="flex items-center gap-2">
+            <GraduationCap />
+            <span>
+              Went to
+              {' '}
+              <b>{user.school}</b>
+            </span>
+          </div>
+        )}
+        {user.work && (
+          <div className="flex items-center gap-2">
+            <BriefcaseBusiness />
+            <span>
+              Works at
+              {' '}
+              <b>{user.work}</b>
+            </span>
+          </div>
+        )}
 
-        <div className="flex items-center gap-1">
-          <Calendar />
-          <span className="font-medium">Joined November 2024</span>
+        <div className="flex items-center justify-between">
+          {user.website && (
+            <div className="flex items-center gap-1">
+              <LinkIcon />
+              <Link
+                href={user.website}
+                className="font-medium text-brand"
+              >
+                {user.website}
+              </Link>
+            </div>
+          )}
+
+          <div className="flex items-center gap-1">
+            <Calendar />
+            <span className="font-medium">
+              Joined
+              {' '}
+              {formattedDate}
+            </span>
+          </div>
         </div>
+        <UserInfoCardInteraction
+          userId={user.id}
+          currentUserId={String(currentUserId)}
+          isFollowRequestPending={isFollowRequestPending}
+          isFollowing={isFollowing}
+          isUserBlocked={isBlocked}
+        />
       </div>
-      <button
-        type="button"
-        className="rounded-md bg-brand p-2 text-sm text-white hover:bg-brand-600"
-      >
-        Follow
-      </button>
-      <span className="cursor-pointer self-end text-xs text-red-400">Block User</span>
     </div>
-  </div>
-);
+  );
+};
 
 export default UserInfoCard;

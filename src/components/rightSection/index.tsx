@@ -1,3 +1,6 @@
+import { User } from '@prisma/client';
+import { Suspense } from 'react';
+
 import Birthdays from '@/components/rightSection/Birthdays';
 import FriendRequests from '@/components/rightSection/FriendRequests';
 import SponsoredAds from '@/components/rightSection/SponsoredAds';
@@ -5,15 +8,19 @@ import UserInfoCard from '@/components/rightSection/user/UserInfoCard';
 import UserMediaCard from '@/components/rightSection/user/UserMediaCard';
 
 type Props = {
-  userId?: string
+  user?: User
 }
 
-const RightSection = ({ userId }: Props) => (
+const RightSection = ({ user }: Props) => (
   <div className="flex flex-col gap-6">
-    {userId && (
+    {user && (
       <>
-        <UserInfoCard />
-        <UserMediaCard />
+        <Suspense fallback="Loading ...">
+          <UserInfoCard user={user} />
+        </Suspense>
+        <Suspense fallback="Loading ...">
+          <UserMediaCard />
+        </Suspense>
       </>
     )}
     <FriendRequests />
